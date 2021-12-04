@@ -69,12 +69,14 @@ public class SecurityServiceTest {
     }
 
     @Test
+    // TODO: If pending alarm and all sensors are inactive, return to no alarm state.
     void if_pendingAlarm_inactiveAllSensors_then_noAlarmStatus() {
         Mockito.when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         securityService.changeSensorActivationStatus(sensor, false);
 
         Mockito.verify(securityRepository, Mockito.times(1)).setAlarmStatus(AlarmStatus.NO_ALARM);
     }
+
 
 
 }
