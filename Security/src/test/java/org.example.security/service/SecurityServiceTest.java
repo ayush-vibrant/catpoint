@@ -6,17 +6,20 @@ import org.example.security.data.ArmingStatus;
 import org.example.security.data.SecurityRepository;
 import org.example.security.data.Sensor;
 import org.example.security.data.SensorType;
-import org.example.security.service.SecurityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.ParameterizedTest;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SecurityServiceTest {
@@ -52,31 +55,56 @@ public class SecurityServiceTest {
 
     @Test
     void if_armedAlarmStatus_and_activatedSensor_then_put_system_into_pendingAlarmStatus() {
-        Mockito.when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME); // TODO: Why am I not able to write when() instead of Mockito.when()
-        Mockito.when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.NO_ALARM);
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.NO_ALARM);
         securityService.changeSensorActivationStatus(sensor, true);
 
-        Mockito.verify(securityRepository, Mockito.times(1)).setAlarmStatus(AlarmStatus.PENDING_ALARM);
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.PENDING_ALARM);
     }
 
     @Test
     void if_armedAlarm_activatedSensor_pendingAlarm_then_alarmStatus() {
-        Mockito.when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
-        Mockito.when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
         securityService.changeSensorActivationStatus(sensor, true);
 
-        Mockito.verify(securityRepository, Mockito.times(1)).setAlarmStatus(AlarmStatus.ALARM);
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);
     }
 
     @Test
-    // TODO: If pending alarm and all sensors are inactive, return to no alarm state.
     void if_pendingAlarm_inactiveAllSensors_then_noAlarmStatus() {
-        Mockito.when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        securityService.changeSensorActivationStatus(sensor, true);
         securityService.changeSensorActivationStatus(sensor, false);
 
-        Mockito.verify(securityRepository, Mockito.times(1)).setAlarmStatus(AlarmStatus.NO_ALARM);
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.NO_ALARM);
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void if_activeAlarm_and_activatedSensor_or_deactivatedSensor_then_activeAlarm(boolean sensorStatus) {
+        lenient().when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
+        lenient().when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
+        securityService.changeSensorActivationStatus(sensor, sensorStatus);
 
+        verify(securityRepository, never()).setAlarmStatus(any(AlarmStatus.class));
+    }
 
+    @Test
+    void if_alreadyActiveSensor_activated_pendingAlarmState_then_alarmStatus() {
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        securityService.changeSensorActivationStatus(sensor, true);
+        securityService.changeSensorActivationStatus(sensor, true);
+
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);
+    }
+
+    @Test
+    void if_alreadyDeactivatedSensor_deactivated_then_noAlarmStatus() {
+        securityService.changeSensorActivationStatus(sensor, false);
+        securityService.changeSensorActivationStatus(sensor, false);
+
+        verify(securityRepository, never()).setAlarmStatus(any(AlarmStatus.class));
+    }
 }
