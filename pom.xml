@@ -80,7 +80,13 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <configuration>
+                        <argLine>
+                            --add-opens Security/org.example.security.service=ALL-UNNAMED
+                        </argLine>
+                    </configuration>
+
+                    <version>3.0.0-M5</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>

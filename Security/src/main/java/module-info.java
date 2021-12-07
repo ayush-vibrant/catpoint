@@ -7,4 +7,5 @@ module Security { //TODO: Rename using top level package naming
     requires Image;
     requires java.sql;
 
+    opens org.example.security.data to com.google.gson;
 }
