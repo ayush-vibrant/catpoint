@@ -8,9 +8,7 @@ import org.example.security.data.SecurityRepository;
 import org.example.security.data.Sensor;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -123,6 +121,18 @@ public class SecurityService {
             case PENDING_ALARM -> setAlarmStatus(AlarmStatus.NO_ALARM);
             case ALARM -> setAlarmStatus(AlarmStatus.PENDING_ALARM);
         }
+    }
+
+    public void changeSensorActivationStatus(Sensor sensor) {
+        AlarmStatus actualAlarmStatus = this.getAlarmStatus();
+        ArmingStatus actualArmingStatus = this.getArmingStatus();
+
+        if (actualAlarmStatus == AlarmStatus.PENDING_ALARM && !sensor.getActive()) {
+            handleSensorDeactivated();
+        } else if (actualAlarmStatus == AlarmStatus.ALARM && actualArmingStatus == ArmingStatus.DISARMED) {
+            handleSensorDeactivated();
+        }
+        securityRepository.updateSensor(sensor);
     }
 
     /**

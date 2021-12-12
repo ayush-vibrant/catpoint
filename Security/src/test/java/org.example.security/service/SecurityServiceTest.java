@@ -77,10 +77,30 @@ public class SecurityServiceTest {
     void if_pendingAlarm_inactiveAllSensors_then_noAlarmStatus() {
         when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
-        securityService.changeSensorActivationStatus(sensor, true);
+        sensor.setActive(false);
+        securityService.changeSensorActivationStatus(sensor);
+
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.NO_ALARM);
+    }
+
+    @Test
+    void if_pendingAlarm_activeSensor_then_noAlarmStatus() {
+        lenient().when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.ARMED_HOME);
+        lenient().when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
+        sensor.setActive(true);
         securityService.changeSensorActivationStatus(sensor, false);
 
         verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.NO_ALARM);
+    }
+
+    @Test
+    void if_Alarmed_inactiveAllSensors_then_noAlarmStatus() {
+        when(securityRepository.getArmingStatus()).thenReturn(ArmingStatus.DISARMED);
+        when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.ALARM);
+        sensor.setActive(false);
+        securityService.changeSensorActivationStatus(sensor);
+
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.PENDING_ALARM);
     }
 
     @ParameterizedTest
