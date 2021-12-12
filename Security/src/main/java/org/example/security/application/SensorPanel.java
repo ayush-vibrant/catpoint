@@ -71,6 +71,7 @@ public class SensorPanel extends JPanel {
         securityService.getSensors().stream().sorted().forEach(s -> {
             JLabel sensorLabel = new JLabel(String.format("%s(%s): %s", s.getName(),  s.getSensorType().toString(),(s.getActive() ? "Active" : "Inactive")));
             JButton sensorToggleButton = new JButton((s.getActive() ? "Deactivate" : "Activate"));
+            System.out.println(s.getActive());
             JButton sensorRemoveButton = new JButton("Remove Sensor");
 
             sensorToggleButton.addActionListener(e -> setSensorActivity(s, !s.getActive()) );

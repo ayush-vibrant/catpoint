@@ -141,7 +141,9 @@ public class SecurityService {
                 handleSensorDeactivated();
             }
         }
+        System.out.println("BEFORE Sensor " + sensor.getName() + " is now " + (active ? "active" : "inactive"));
         sensor.setActive(active);
+        System.out.println("AFTER Sensor " + sensor.getName() + " is now " + (sensor.getActive() ? "active" : "inactive"));
         securityRepository.updateSensor(sensor);
     }
 
