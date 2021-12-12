@@ -96,7 +96,7 @@ public class SecurityServiceTest {
     @Test
     void if_alreadyActiveSensor_activated_pendingAlarmState_then_alarmStatus() {
         when(securityRepository.getAlarmStatus()).thenReturn(AlarmStatus.PENDING_ALARM);
-        securityService.changeSensorActivationStatus(sensor, true);
+        sensor.setActive(true);
         securityService.changeSensorActivationStatus(sensor, true);
 
         verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);

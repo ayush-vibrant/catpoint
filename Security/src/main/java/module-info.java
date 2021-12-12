@@ -1,8 +1,8 @@
-module Security { //TODO: Rename using top level package naming
+module Security {
     requires java.desktop;
     requires miglayout;
     requires guava;
-    requires gson;
+    requires com.google.gson;
     requires java.prefs;
     requires Image;
     requires java.sql;
