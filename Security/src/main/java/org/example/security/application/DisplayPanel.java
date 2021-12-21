@@ -48,7 +48,9 @@ public class DisplayPanel extends JPanel implements StatusListener {
     }
 
     @Override
-    public void sensorStatusChanged() {
+    public void sensorStatusChanged(SecurityService securityService) {
         // no behavior necessary
+        SensorPanel sensorPanel = new SensorPanel(securityService);
+        sensorPanel.updateSensors();
     }
 }

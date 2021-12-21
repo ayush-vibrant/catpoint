@@ -7,6 +7,7 @@ import org.example.security.service.StyleService;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Panel that allows users to add sensors to their system. Sensors may be
@@ -45,6 +46,9 @@ public class SensorPanel extends JPanel {
         add(panelLabel, "wrap");
         add(newSensorPanel, "span");
         add(sensorListPanel, "span");
+    }
+
+    public SensorPanel() {
     }
 
     /**
@@ -93,6 +97,7 @@ public class SensorPanel extends JPanel {
      * @param isActive The sensor's activation status
      */
     private void setSensorActivity(Sensor sensor, Boolean isActive) {
+        System.out.println("active or not: " + isActive);
         securityService.changeSensorActivationStatus(sensor, isActive);
         updateSensorList(sensorListPanel);
     }
@@ -117,5 +122,9 @@ public class SensorPanel extends JPanel {
     private void removeSensor(Sensor sensor) {
         securityService.removeSensor(sensor);
         updateSensorList(sensorListPanel);
+    }
+
+    public void updateSensors(){
+        this.updateSensorList(sensorListPanel);
     }
 }

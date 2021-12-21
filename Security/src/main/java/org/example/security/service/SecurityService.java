@@ -45,16 +45,11 @@ public class SecurityService {
         if (armingStatus == ArmingStatus.DISARMED) {
             setAlarmStatus(AlarmStatus.NO_ALARM);
         } else {
-//            Set<Sensor> sensors = getSensors();
-//            List<Sensor> tempSensors = new ArrayList<>(sensors);
-//            for (int i = 0; i < tempSensors.size(); i++) {
-//                changeSensorActivationStatus(tempSensors.get(i), false);
-//            }
             ConcurrentSkipListSet<Sensor> sensors = new ConcurrentSkipListSet<>(getSensors());
             sensors.forEach(sensor -> changeSensorActivationStatus(sensor, false));
         }
         securityRepository.setArmingStatus(armingStatus);
-        statusListeners.forEach(StatusListener::sensorStatusChanged);
+        statusListeners.forEach(sl -> sl.sensorStatusChanged(this));
     }
 
     /**
@@ -64,6 +59,8 @@ public class SecurityService {
      * @param cat True if a cat is detected, otherwise false.
      */
     private void catDetected(Boolean cat) {
+        catDetection = cat;
+
         if (cat && getArmingStatus() == ArmingStatus.ARMED_HOME) {
             setAlarmStatus(AlarmStatus.ALARM);
         } else if (!cat && getAllSensorsFromState(false)) {
@@ -151,7 +148,7 @@ public class SecurityService {
                 handleSensorDeactivated();
             }
         }
-        System.out.println("BEFORE Sensor " + sensor.getName() + " is now " + (active ? "active" : "inactive"));
+        System.out.println("BEFORE Sensor " + sensor.getName() + " is now " + sensor.getActive());
         sensor.setActive(active);
         System.out.println("AFTER Sensor " + sensor.getName() + " is now " + (sensor.getActive() ? "active" : "inactive"));
         securityRepository.updateSensor(sensor);
