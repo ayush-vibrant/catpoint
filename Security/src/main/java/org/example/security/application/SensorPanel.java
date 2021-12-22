@@ -1,5 +1,6 @@
 package org.example.security.application;
 
+import org.example.security.data.AlarmStatus;
 import org.example.security.data.Sensor;
 import org.example.security.data.SensorType;
 import org.example.security.service.SecurityService;
@@ -7,13 +8,12 @@ import org.example.security.service.StyleService;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * Panel that allows users to add sensors to their system. Sensors may be
  * manually set to "active" and "inactive" to test the system.
  */
-public class SensorPanel extends JPanel {
+public class SensorPanel extends JPanel implements StatusListener{
 
     private SecurityService securityService;
 
@@ -126,5 +126,20 @@ public class SensorPanel extends JPanel {
 
     public void updateSensors(){
         this.updateSensorList(sensorListPanel);
+    }
+
+    @Override
+    public void notify(AlarmStatus status) {
+
+    }
+
+    @Override
+    public void catDetected(boolean catDetected) {
+
+    }
+
+    @Override
+    public void sensorStatusChanged(SecurityService securityService) {
+        updateSensorList(sensorListPanel);
     }
 }
