@@ -49,7 +49,7 @@ public class SecurityService {
             sensors.forEach(sensor -> changeSensorActivationStatus(sensor, false));
         }
         securityRepository.setArmingStatus(armingStatus);
-        statusListeners.forEach(sl -> sl.sensorStatusChanged(this));
+        statusListeners.forEach(sl -> sl.sensorStatusChanged());
     }
 
     /**
