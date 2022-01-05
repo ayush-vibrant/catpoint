@@ -184,11 +184,4 @@ public class SecurityServiceTest {
         verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);
     }
 
-    @Test
-    void if_systemIsArmedHome_and_noCatImage_then_AlarmStatus() {
-        securityService.setArmingStatus(ArmingStatus.ARMED_HOME);
-
-        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);
-    }
-
 }
