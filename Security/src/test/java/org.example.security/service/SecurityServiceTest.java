@@ -139,8 +139,9 @@ public class SecurityServiceTest {
         when(imageService.imageContainsCat(any(), anyFloat())).thenReturn(true);
 
         securityService.processImage(eq(any(BufferedImage.class)));
+        securityService.setArmingStatus(ArmingStatus.ARMED_HOME);
 
-        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);
+        verify(securityRepository, times(2)).setAlarmStatus(AlarmStatus.ALARM);
     }
 
     @Test
@@ -179,6 +180,13 @@ public class SecurityServiceTest {
         when(imageService.imageContainsCat(any(), anyFloat())).thenReturn(true);
 
         securityService.processImage(eq(any(BufferedImage.class)));
+
+        verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);
+    }
+
+    @Test
+    void if_systemIsArmedHome_and_noCatImage_then_AlarmStatus() {
+        securityService.setArmingStatus(ArmingStatus.ARMED_HOME);
 
         verify(securityRepository, times(1)).setAlarmStatus(AlarmStatus.ALARM);
     }
